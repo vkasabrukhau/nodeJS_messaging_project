@@ -11,11 +11,22 @@ const indexRouter = require('./routes/index');
 const expressLayouts = require('express-ejs-layouts');
 var accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), { flags: 'a' });
 
+const MongoStore = require('connect-mongo');
+
 app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(logger(config.get("log_format"), { stream: accessLogStream }));
+
+app.use(
+  session({
+    secret: 'webChat2734',
+    store: MongoStore.create({
+      mongoUrl: config.get('DB_url')
+    })
+  })
+)
 
 app.use(expressLayouts);
 //error handler
